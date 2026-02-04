@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Instruments</title>
+		<script src="MIDI.js/inc/shim/Base64.js"></script>
+		<script src="MIDI.js/inc/shim/Base64binary.js"></script>
+		<script src="MIDI.js/inc/shim/WebAudioAPI.js"></script>
+		<script src="MIDI.js/inc/shim/WebMIDIAPI.js"></script>
+		<script src="MIDI.js/inc/jasmid/stream.js"></script>
+		<script src="MIDI.js/inc/jasmid/midifile.js"></script>
+		<script src="MIDI.js/inc/jasmid/replayer.js"></script>
+		<script src="MIDI.js/js/midi/audioDetect.js"></script>
+		<script src="MIDI.js/js/midi/gm.js"></script>
+		<script src="MIDI.js/js/midi/loader.js"></script>
+		<script src="MIDI.js/js/midi/plugin.audiotag.js"></script>
+		<script src="MIDI.js/js/midi/plugin.webaudio.js"></script>
+		<script src="MIDI.js/js/midi/plugin.webmidi.js"></script>
+		<script src="MIDI.js/js/midi/player.js"></script>
+		<script src="MIDI.js/js/util/dom_request_xhr.js"></script>
+		<script src="MIDI.js/js/util/dom_request_script.js"></script>
+		<script src="metronome.js"></script>
+		<link rel="stylesheet" href="style.css">
+		<script src="script.js"></script>
+	</head>
+	<body>
+		<div id="ui">
+			<div id="interactions">
+				<button id="help-button">?</button>
+				<span>Instrument:</span>
+				<select id="interaction"></select>
+				<button id="start-interaction">Play</button>
+				<button id="stop-interaction">Stop</button>
+			</div>
+			<div id="settings">
+				<span>Octave:</span>
+				<input id="octave" type="number" min="1" max="6" step="1">
+				<span>BPM:</span>
+				<input id="tempo" type="number" min="30" max="400" step="10">
+			</div>
+			<div id="midi-player">
+				<input id="url" type="text" placeholder="Enter MIDI URL...">
+				<div id="time">00:00:00/00:00:00</div>
+				<button id="play">PLAY</button>
+				<button id="stop">STOP</button>
+				<button id="record">REC</button>
+				<button id="erase">DEL</button>
+			</div>
+			<div id="keyboard" tabindex="0">
+				<svg viewBox="0 0 1680 400">
+					<g>
+						<g>
+							<rect id="key-C1" class="piano-key white-key" data-note="C" data-octave="0" x="0" y="0" width="80" height="400"/>
+							<rect id="key-D1" class="piano-key white-key" data-note="D" data-octave="0" x="80" y="0" width="80" height="400"/>
+							<rect id="key-E1" class="piano-key white-key" data-note="E" data-octave="0" x="160" y="0" width="80" height="400"/>
+							<rect id="key-F1" class="piano-key white-key" data-note="F" data-octave="0" x="240" y="0" width="80" height="400"/>
+							<rect id="key-G1" class="piano-key white-key" data-note="G" data-octave="0" x="320" y="0" width="80" height="400"/>
+							<rect id="key-A1" class="piano-key white-key" data-note="A" data-octave="0" x="400" y="0" width="80" height="400"/>
+							<rect id="key-B1" class="piano-key white-key" data-note="B" data-octave="0" x="480" y="0" width="80" height="400"/>
+							<rect id="key-Db1" class="piano-key black-key" data-note="Db" data-octave="0" x="60" y="0" width="40" height="280"/>
+							<rect id="key-Eb1" class="piano-key black-key" data-note="Eb" data-octave="0" x="140" y="0" width="40" height="280"/>
+							<rect id="key-Gb1" class="piano-key black-key" data-note="Gb" data-octave="0" x="300" y="0" width="40" height="280"/>
+							<rect id="key-Ab1" class="piano-key black-key" data-note="Ab" data-octave="0" x="380" y="0" width="40" height="280"/>
+							<rect id="key-Bb1" class="piano-key black-key" data-note="Bb" data-octave="0" x="460" y="0" width="40" height="280"/>
+						</g>
+						<g transform="translate(560.000000, 0.000000)">
+							<rect id="key-C2" class="piano-key white-key" data-note="C" data-octave="1" x="0" y="0" width="80" height="400"/>
+							<rect id="key-D2" class="piano-key white-key" data-note="D" data-octave="1" x="80" y="0" width="80" height="400"/>
+							<rect id="key-E2" class="piano-key white-key" data-note="E" data-octave="1" x="160" y="0" width="80" height="400"/>
+							<rect id="key-F2" class="piano-key white-key" data-note="F" data-octave="1" x="240" y="0" width="80" height="400"/>
+							<rect id="key-G2" class="piano-key white-key" data-note="G" data-octave="1" x="320" y="0" width="80" height="400"/>
+							<rect id="key-A2" class="piano-key white-key" data-note="A" data-octave="1" x="400" y="0" width="80" height="400"/>
+							<rect id="key-B2" class="piano-key white-key" data-note="B" data-octave="1" x="480" y="0" width="80" height="400"/>
+							<rect id="key-Db2" class="piano-key black-key" data-note="Db" data-octave="1" x="60" y="0" width="40" height="280"/>
+							<rect id="key-Eb2" class="piano-key black-key" data-note="Eb" data-octave="1" x="140" y="0" width="40" height="280"/>
+							<rect id="key-Gb2" class="piano-key black-key" data-note="Gb" data-octave="1" x="300" y="0" width="40" height="280"/>
+							<rect id="key-Ab2" class="piano-key black-key" data-note="Ab" data-octave="1" x="380" y="0" width="40" height="280"/>
+							<rect id="key-Bb2" class="piano-key black-key" data-note="Bb" data-octave="1" x="460" y="0" width="40" height="280"/>
+						</g>
+						<g transform="translate(1120.000000, 0.000000)">
+							<rect id="key-C3" class="piano-key white-key" data-note="C" data-octave="2" x="0" y="0" width="80" height="400"/>
+							<rect id="key-D3" class="piano-key white-key" data-note="D" data-octave="2" x="80" y="0" width="80" height="400"/>
+							<rect id="key-E3" class="piano-key white-key" data-note="E" data-octave="2" x="160" y="0" width="80" height="400"/>
+							<rect id="key-F3" class="piano-key white-key" data-note="F" data-octave="2" x="240" y="0" width="80" height="400"/>
+							<rect id="key-G3" class="piano-key white-key" data-note="G" data-octave="2" x="320" y="0" width="80" height="400"/>
+							<rect id="key-A3" class="piano-key white-key" data-note="A" data-octave="2" x="400" y="0" width="80" height="400"/>
+							<rect id="key-B3" class="piano-key white-key" data-note="B" data-octave="2" x="480" y="0" width="80" height="400"/>
+							<rect id="key-Db3" class="piano-key black-key" data-note="Db" data-octave="2" x="60" y="0" width="40" height="280"/>
+							<rect id="key-Eb3" class="piano-key black-key" data-note="Eb" data-octave="2" x="140" y="0" width="40" height="280"/>
+							<rect id="key-Gb3" class="piano-key black-key" data-note="Gb" data-octave="2" x="300" y="0" width="40" height="280"/>
+							<rect id="key-Ab3" class="piano-key black-key" data-note="Ab" data-octave="2" x="380" y="0" width="40" height="280"/>
+							<rect id="key-Bb3" class="piano-key black-key" data-note="Bb" data-octave="2" x="460" y="0" width="40" height="280"/>
+						</g>
+						<g>
+							<text class="piano-key-label white-key" x="40" y="350">Z</text>
+							<text class="piano-key-label white-key" x="120" y="350">X</text>
+							<text class="piano-key-label white-key" x="200" y="350">C</text>
+							<text class="piano-key-label white-key" x="280" y="350">V</text>
+							<text class="piano-key-label white-key" x="360" y="350">B</text>
+							<text class="piano-key-label white-key" x="440" y="350">N</text>
+							<text class="piano-key-label white-key" x="520" y="350">M</text>
+							<text class="piano-key-label black-key" x="80" y="200">S</text>
+							<text class="piano-key-label black-key" x="160" y="200">D</text>
+							<text class="piano-key-label black-key" x="320" y="200">G</text>
+							<text class="piano-key-label black-key" x="400" y="200">H</text>
+							<text class="piano-key-label black-key" x="480" y="200">J</text>
+						</g>
+						<g transform="translate(560.000000, 0.000000)">
+							<text class="piano-key-label white-key" x="40" y="350">,</text>
+							<text class="piano-key-label white-key" x="120" y="350">.</text>
+							<text class="piano-key-label white-key" x="200" y="350">/</text>
+							<text class="piano-key-label white-key" x="280" y="350">Q</text>
+							<text class="piano-key-label white-key" x="360" y="350">W</text>
+							<text class="piano-key-label white-key" x="440" y="350">E</text>
+							<text class="piano-key-label white-key" x="520" y="350">R</text>
+							<text class="piano-key-label black-key" x="80" y="200">L</text>
+							<text class="piano-key-label black-key" x="160" y="200">;</text>
+							<text class="piano-key-label black-key" x="320" y="200">2</text>
+							<text class="piano-key-label black-key" x="400" y="200">3</text>
+							<text class="piano-key-label black-key" x="480" y="200">4</text>
+						</g>
+						<g transform="translate(1120.000000, 0.000000)">
+							<text class="piano-key-label white-key" x="40" y="350">T</text>
+							<text class="piano-key-label white-key" x="120" y="350">Y</text>
+							<text class="piano-key-label white-key" x="200" y="350">U</text>
+							<text class="piano-key-label white-key" x="280" y="350">I</text>
+							<text class="piano-key-label white-key" x="360" y="350">O</text>
+							<text class="piano-key-label white-key" x="440" y="350">P</text>
+							<text class="piano-key-label white-key" x="520" y="350">[</text>
+							<text class="piano-key-label black-key" x="80" y="200">6</text>
+							<text class="piano-key-label black-key" x="160" y="200">7</text>
+							<text class="piano-key-label black-key" x="320" y="200">9</text>
+							<text class="piano-key-label black-key" x="400" y="200">0</text>
+							<text class="piano-key-label black-key" x="480" y="200">-</text>
+						</g>
+					</g>
+				</svg>
+			</div>
+			<button id="close">Close</button>
+		</div>
+		<div id="help">
+			<h1>Help</h1>
+			<div id="help-content">
+				<p>Select instrument and click Play to start.</p>
+				<p>Click Stop or Close to stop playing.</p>
+			</div>
+			<div id="help-menu-controls">
+				<button id="close-help">Close</button>
+			</div>
+		</div>
+	</body>
+</html>
