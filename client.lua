@@ -785,6 +785,114 @@ AddEventHandler('instruments:midiDownloaded', function(requestId, success, error
         midiDownloadCallbacks[requestId] = nil
     end
 end)
+-- ============================================
+-- SESSION MANAGEMENT (NUI Callbacks)
+-- ============================================
+local currentMidiSession = nil
+local sessionDataReceived = false
+local sessionDataResult = nil
+
+-- Начать сессию (когда играешь MIDI)
+RegisterNUICallback('startMidiSession', function(data, cb)
+    currentMidiSession = {
+        midiUrl = data.midiUrl,
+        position = 0
+    }
+    TriggerServerEvent('instruments:startSession', data.midiUrl)
+    cb({ success = true })
+end)
+
+-- Остановить сессию
+RegisterNUICallback('stopMidiSession', function(data, cb)
+    currentMidiSession = nil
+    TriggerServerEvent('instruments:stopSession')
+    cb({ success = true })
+end)
+
+-- Обновить позицию воспроизведения
+RegisterNUICallback('updateMidiPosition', function(data, cb)
+    if currentMidiSession then
+        currentMidiSession.position = data.position
+        TriggerServerEvent('instruments:updatePosition', data.position)
+    end
+    cb({ success = true })
+end)
+
+-- Присоединиться к ближайшей сессии
+RegisterNUICallback('joinNearestSession', function(data, cb)
+    sessionDataReceived = false
+    sessionDataResult = nil
+    
+    -- Запрашиваем сессию у сервера
+    TriggerServerEvent('instruments:requestNearestSession')
+    
+    -- Ждём ответ в отдельном потоке
+    CreateThread(function()
+        local timeout = 30 -- 3 секунды (30 * 100ms)
+        
+        while not sessionDataReceived and timeout > 0 do
+            Wait(100)
+            timeout = timeout - 1
+        end
+        
+        if sessionDataReceived and sessionDataResult then
+            cb({
+                success = true,
+                playerId = sessionDataResult.playerId,
+                midiUrl = sessionDataResult.midiUrl,
+                position = sessionDataResult.position or 0
+            })
+        else
+            cb({ success = false, error = "No session found or timeout" })
+        end
+    end)
+end)
+
+-- Получаем данные сессии от сервера
+RegisterNetEvent('instruments:sessionData')
+AddEventHandler('instruments:sessionData', function(sessionData)
+    sessionDataReceived = true
+    sessionDataResult = sessionData
+end)
+CreateThread(function()
+    while true do
+        Wait(500) -- Каждые 500мс
+        
+        if currentMidiSession and currentMidiSession.position then
+            TriggerServerEvent('instruments:updatePosition', currentMidiSession.position)
+        end
+    end
+end)
+-- Получить текущую позицию сессии (для синхронизации после загрузки)
+RegisterNUICallback('getCurrentSessionPosition', function(data, cb)
+    sessionDataReceived = false
+    sessionDataResult = nil
+    
+    TriggerServerEvent('instruments:requestNearestSession')
+    
+    CreateThread(function()
+        local timeout = 20 -- 2 секунды
+        
+        while not sessionDataReceived and timeout > 0 do
+            Wait(100)
+            timeout = timeout - 1
+        end
+        
+        if sessionDataReceived and sessionDataResult then
+            cb({
+                success = true,
+                position = sessionDataResult.position or 0
+            })
+        else
+            cb({ success = false, position = 0 })
+        end
+    end)
+end)
+-- Покинуть сессию
+RegisterNUICallback('leaveSession', function(data, cb)
+    TriggerServerEvent('instruments:leaveSession')
+    cb({ success = true })
+end)
 CreateThread(function()
 	TriggerEvent('chat:addSuggestion', '/instrument', 'Play an instrument', {
 		{name = 'instrument', help = table.concat(GetInstrumentList(), ', ') .. ', or stop to stop playing an instrument'}

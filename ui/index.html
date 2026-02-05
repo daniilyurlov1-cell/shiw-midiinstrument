@@ -37,6 +37,9 @@
 				<input id="octave" type="number" min="1" max="6" step="1">
 				<span>BPM:</span>
 				<input id="tempo" type="number" min="30" max="400" step="10">
+				<span>Volume:</span>
+				<input id="volume" type="range" min="0" max="100" value="100" title="Volume">
+				<span id="volume-display">100%</span>
 			</div>
 			<div id="midi-player">
 				<input id="url" type="text" placeholder="Enter MIDI URL...">
@@ -45,6 +48,7 @@
 				<button id="stop">STOP</button>
 				<button id="record">REC</button>
 				<button id="erase">DEL</button>
+				<button id="join-session" title="Join another player's session">JOIN</button>
 			</div>
 			<div id="keyboard" tabindex="0">
 				<svg viewBox="0 0 1680 400">
@@ -143,10 +147,17 @@
 			<div id="help-content">
 				<p>Select instrument and click Play to start.</p>
 				<p>Click Stop or Close to stop playing.</p>
+				<p><b>JOIN</b> - Join another player's MIDI session to play together.</p>
 			</div>
 			<div id="help-menu-controls">
 				<button id="close-help">Close</button>
 			</div>
+		</div>
+		<!-- Session picker dialog -->
+		<div id="session-picker" style="display:none;">
+			<h2>Join Session</h2>
+			<div id="session-list">Loading...</div>
+			<button id="close-session-picker">Cancel</button>
 		</div>
 	</body>
 </html>

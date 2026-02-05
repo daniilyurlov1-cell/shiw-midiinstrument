@@ -74,7 +74,57 @@ input:disabled {
 	color: #444;
 	border: solid 1px #444;
 }
+/* Volume slider styling */
+#volume {
+	width: 80px;
+	height: 20px;
+	cursor: pointer;
+	vertical-align: middle;
+}
 
+#volume-display {
+	display: inline-block;
+	width: 40px;
+	text-align: center;
+	font-size: 12px;
+	color: #fff;
+}
+
+/* Range slider custom styling */
+input[type="range"] {
+	-webkit-appearance: none;
+	appearance: none;
+	background: #333;
+	border-radius: 5px;
+	outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 15px;
+	height: 15px;
+	background: #4CAF50;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+	width: 15px;
+	height: 15px;
+	background: #4CAF50;
+	border-radius: 50%;
+	cursor: pointer;
+	border: none;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+	background: #66BB6A;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+	background: #66BB6A;
+}
 input[type="checkbox"] {
 	-webkit-appearance: none;
 	background: rgba(0, 0, 0, 0.5);
@@ -174,6 +224,25 @@ input[type=range]:focus {
 	display: flex;
 	background-color: rgba(0, 0, 0, 0.5);
 	font-size: 1.8vh;
+	align-items: center;
+}
+
+#midi-player label {
+	display: flex;
+	align-items: center;
+	gap: 0.2vw;
+	padding: 0 0.3vw;
+	cursor: pointer;
+	white-space: nowrap;
+	font-size: 1.6vh;
+}
+
+#midi-player label:hover {
+	color: #f88;
+}
+
+#local-only {
+	margin: 0;
 }
 
 #url {
@@ -255,4 +324,89 @@ strong {
 .control {
 	font-family: "212 Keyboard";
 	font-size: 4vh;
+}
+#join-session {
+    background-color: #2196F3;
+    color: white;
+    min-width: 60px;
+}
+
+#join-session:hover {
+    background-color: #42A5F5;
+}
+
+#join-session.joined {
+    background-color: #f44336;
+}
+
+#join-session.joined:hover {
+    background-color: #ef5350;
+}
+
+#join-session:disabled {
+    background-color: #666;
+    cursor: wait;
+}
+
+#session-picker {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: rgba(0, 0, 0, 0.9);
+	border: 2px solid #666;
+	border-radius: 10px;
+	padding: 20px;
+	z-index: 1000;
+	min-width: 300px;
+	color: white;
+}
+
+#session-picker h2 {
+	margin-top: 0;
+	text-align: center;
+}
+
+#session-list {
+	max-height: 300px;
+	overflow-y: auto;
+	margin-bottom: 15px;
+}
+
+.session-item {
+	padding: 10px;
+	margin: 5px 0;
+	background: #333;
+	border-radius: 5px;
+	cursor: pointer;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.session-item:hover {
+	background: #444;
+}
+
+.session-item .player-name {
+	font-weight: bold;
+}
+
+.session-item .session-info {
+	font-size: 12px;
+	color: #aaa;
+}
+
+#close-session-picker {
+	width: 100%;
+	padding: 10px;
+	background: #666;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+#close-session-picker:hover {
+	background: #777;
 }
